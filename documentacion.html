@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentación — StoryData Studio</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ============================================================
+       ESTILOS ESPECÍFICOS DE DOCUMENTACIÓN
+       Complementan style.css sin modificarlo
+    =============================================================== */
+
+    /* Nav de navegación entre páginas */
+    .site-nav {
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--bg-subtle);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .site-nav__brand {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: 0.5px;
+    }
+
+    .site-nav__links {
+      display: flex;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .site-nav__links a {
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      letter-spacing: 0.3px;
+    }
+
+    .site-nav__links a:hover {
+      border-color: var(--bg-subtle);
+      color: var(--text-primary);
+    }
+
+    .site-nav__links a.active {
+      background-color: var(--crimson);
+      color: white;
+      border-color: var(--crimson);
+    }
+
+    /* Layout de documentación */
+    .doc-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 32px;
+      gap: 48px;
+      align-items: start;
+    }
+
+    /* Sidebar de navegación interna */
+    .doc-sidebar {
+      position: sticky;
+      top: 80px;
+    }
+
+    .doc-sidebar__title {
+      font-family: var(--font-body);
+      font-size: 10px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .doc-sidebar__nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .doc-sidebar__nav a {
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 7px 12px;
+      border-radius: 6px;
+      display: block;
+      transition: all 0.15s ease;
+      line-height: 1.4;
+    }
+
+    .doc-sidebar__nav a:hover {
+      background-color: var(--bg-subtle);
+      color: var(--text-primary);
+    }
+
+    .doc-sidebar__nav a.sub {
+      padding-left: 24px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Contenido principal */
+    .doc-content {
+      min-width: 0; /* evita overflow en grid */
+    }
+
+    /* Secciones de documentación */
+    .doc-section {
+      margin-bottom: 64px;
+      scroll-margin-top: 80px; /* offset para el sticky nav */
+    }
+
+    .doc-section__eyebrow {
+      font-family: var(--font-body);
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--magenta);
+      margin-bottom: 8px;
+    }
+
+    .doc-section__title {
+      font-family: var(--font-display);
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--bg-subtle);
+    }
+
+    .doc-section__subtitle {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 32px 0 12px;
+    }
+
+    .doc-section p {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 14px;
+    }
+
+    .doc-section ul,
+    .doc-section ol {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      padding-left: 20px;
+      margin-bottom: 14px;
+    }
+
+    .doc-section li {
+      margin-bottom: 6px;
+    }
+
+    /* Badge de resultado */
+    .result-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: #edfaf6;
+      color: #1a7a5e;
+      border: 1px solid #a3e6d0;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin: 8px 0 16px;
+      font-weight: 500;
+    }
+
+    .result-badge::before {
+      content: '✓';
+      font-weight: 700;
+    }
+
+    .result-badge.warning {
+      background-color: #fff8ed;
+      color: #a05c00;
+      border-color: #f5d08a;
+    }
+
+    .result-badge.warning::before {
+      content: '⚠';
+    }
+
+    /* Bloques de código Python / Looker */
+    .code-block {
+      background-color: #1C1410;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 16px 0 24px;
+      overflow-x: auto;
+      position: relative;
+    }
+
+    .code-block__label {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      font-family: var(--font-body);
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #6B5E52;
+    }
+
+    .code-block code {
+      font-family: 'Courier New', 'Courier', monospace;
+      font-size: 13px;
+      line-height: 1.9;
+      color: #E8D5C0;
+      display: block;
+      white-space: pre;
+    }
+
+    .code-block code .kw  { color: #C0392B; } /* keywords */
+    .code-block code .fn  { color: #E8A87C; } /* funciones */
+    .code-block code .str { color: #A0286E; } /* strings */
+    .code-block code .cm  { color: #6B5E52; } /* comentarios */
+    .code-block code .nm  { color: #5B9BD5; } /* números */
+
+    /* Tabla de variables */
+    .var-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 28px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+    }
+
+    .var-table thead {
+      background-color: var(--text-primary);
+      color: var(--bg-base);
+    }
+
+    .var-table thead th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+    }
+
+    .var-table thead th:first-child { border-radius: 8px 0 0 0; }
+    .var-table thead th:last-child  { border-radius: 0 8px 0 0; }
+
+    .var-table tbody tr {
+      border-bottom: 1px solid var(--bg-subtle);
+      transition: background-color 0.15s;
+    }
+
+    .var-table tbody tr:hover {
+      background-color: var(--bg-card);
+    }
+
+    .var-table tbody td {
+      padding: 11px 16px;
+      color: var(--text-secondary);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    .var-table tbody td:first-child {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: var(--crimson);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Tag de tipo de variable */
+    .type-tag {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: var(--font-body);
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+
+    .type-tag.num {
+      background-color: #eef2ff;
+      color: #4338ca;
+      border: 1px solid #c7d2fe;
+    }
+
+    .type-tag.cat {
+      background-color: #fef3f2;
+      color: var(--crimson);
+      border: 1px solid #fecaca;
+    }
+
+    .type-tag.bin {
+      background-color: #f0fdf4;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    /* Card de variable derivada */
+    .derived-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--bg-subtle);
+      border-left: 3px solid var(--crimson);
+      border-radius: 0 12px 12px 0;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .derived-card:nth-child(2) { border-left-color: var(--magenta); }
+    .derived-card:nth-child(3) { border-left-color: var(--purple);  }
+    .derived-card:nth-child(4) { border-left-color: var(--coral);   }
+    .derived-card:nth-child(5) { border-left-color: var(--steel);   }
+
+    .derived-card__name {
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .derived-card__desc {
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .derived-card__values {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .value-chip {
+      font-family: var(--font-body);
+      font-size: 11px;
+      background-color: var(--bg-subtle);
+      color: var(--text-secondary);
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--bg-subtle);
+    }
+
+    /* Stats de limpieza */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .stat-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--bg-subtle);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-box__value {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--crimson);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-box__label {
+      font-family: var(--font-body);
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .doc-layout {
+        grid-template-columns: 1fr;
+        padding: 32px 20px;
+      }
+      .doc-sidebar { display: none; }
+      .stat-row { grid-template-columns: 1fr; }
+      .site-nav { padding: 12px 20px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================================================
+       NAVEGACIÓN ENTRE PÁGINAS
+  =============================================================== -->
+  <nav class="site-nav">
+    <a href="index.html" class="site-nav__brand">StoryData Studio</a>
+    <ul class="site-nav__links">
+      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="documentacion.html" class="active">Documentación</a></li>
+    </ul>
+  </nav>
+
+
+  <!-- ============================================================
+       LAYOUT PRINCIPAL — sidebar + contenido
+  =============================================================== -->
+  <div class="doc-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="doc-sidebar">
+      <p class="doc-sidebar__title">Contenido</p>
+      <ul class="doc-sidebar__nav">
+        <li><a href="#dataset">Acerca del Dataset</a></li>
+        <li><a href="#variables">Variables Originales</a></li>
+        <li><a href="#calidad">Calidad de Datos</a></li>
+        <li><a href="#calidad" class="sub">Duplicados</a></li>
+        <li><a href="#calidad" class="sub">Nulos</a></li>
+        <li><a href="#calidad" class="sub">Tipos de variable</a></li>
+        <li><a href="#categoricas">Variables Categóricas</a></li>
+        <li><a href="#continuas">Variables Continuas</a></li>
+        <li><a href="#limpieza">Eliminación y Limpieza</a></li>
+        <li><a href="#derivadas">Variables Derivadas</a></li>
+      </ul>
+    </aside>
+
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="doc-content">
+
+      <!-- HEADER DE LA DOC -->
+      <div style="margin-bottom: 48px;">
+        <p style="font-family: var(--font-body); font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--magenta); margin-bottom:10px;">
+          Documentación Técnica
+        </p>
+        <h1 style="font-family:var(--font-display); font-size:2.2rem; font-weight:700; color:var(--text-primary); letter-spacing:-0.5px; line-height:1.1; margin-bottom:12px;">
+          Modelado de Datos
+        </h1>
+        <p style="font-family:var(--font-body); color:var(--text-secondary); font-size:0.95rem; line-height:1.7; max-width:580px;">
+          Documentación del proceso de extracción, limpieza y transformación del dataset
+          de campañas de marketing bancario. Responsable: Marco Antonio Cruz.
+        </p>
+      </div>
+
+
+      <!-- ======================================================
+           SECCIÓN 1: ACERCA DEL DATASET
+      ======================================================= -->
+      <section class="doc-section" id="dataset">
+        <p class="doc-section__eyebrow">01</p>
+        <h2 class="doc-section__title">Acerca del Dataset</h2>
+
+        <p>
+          Los datos están relacionados a campañas de marketing bancario orientadas a la
+          oferta de depósitos a término fijo. El dataset permite analizar el perfil demográfico
+          de los clientes, sus variables financieras, la estrategia de contacto utilizada
+          y la variable objetivo de aceptación o rechazo de la oferta.
+        </p>
+
+        <p>
+          <strong>Público objetivo:</strong> gerentes de marketing bancario y público general
+          interesado en decisiones basadas en datos. El análisis utiliza un lenguaje claro,
+          estratégico y no excesivamente técnico.
+        </p>
+
+        <p>
+          <strong>Intención narrativa:</strong> el proyecto busca demostrar que la segmentación
+          inteligente mejora la eficiencia de campañas comerciales. Entender el perfil del
+          cliente es más esencial que aumentar el número de llamadas.
+        </p>
+
+        <div class="stat-row">
+          <div class="stat-box">
+            <div class="stat-box__value">45.211</div>
+            <div class="stat-box__label">Observaciones originales</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box__value">17</div>
+            <div class="stat-box__label">Variables totales</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box__value">41.283</div>
+            <div class="stat-box__label">Observaciones finales</div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ======================================================
+           SECCIÓN 2: VARIABLES ORIGINALES
+      ======================================================= -->
+      <section class="doc-section" id="variables">
+        <p class="doc-section__eyebrow">02</p>
+        <h2 class="doc-section__title">Variables Originales</h2>
+
+        <p>
+          La base de datos cuenta con 17 variables: <strong>7 de tipo numérico entero</strong>
+          y <strong>10 de tipo categórico (objeto)</strong>. A continuación se describen todas las variables.
+        </p>
+
+        <table class="var-table">
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>age</td>
+              <td><span class="type-tag num">Numérico</span></td>
+              <td>Edad del cliente. Rango: 18–95 años.</td>
+            </tr>
+            <tr>
+              <td>job</td>
+              <td><span class="type-tag cat">Categórico</span></td>
+              <td>Tipo de ocupación del cliente (ej: admin, technician, retired).</td>
+            </tr>
+            <tr>
+              <td>marital</td>
+              <td><span class="type-tag cat">Categórico</span></td>
+              <td>Estado civil: married, single, divorced.</td>
+            </tr>
+            <tr>
+              <td>education</td>
+              <td><span class="type-tag cat">Categórico</span></td>
+              <td>Nivel educativo: primary, secondary, tertiary, unknown.</td>
+            </tr>
+            <tr>
+              <td>default</td>
+              <td><span class="type-tag cat">Categórico</span></td>
+              <td>¿Tiene historial de mora? yes / no. El 98% corresponde a "no".</td>
+            </tr>
+            <tr>
+              <td>balance</td>
+              <td><span class="type-tag num">Numérico</span></td>
+              <td>Saldo promedio anual en cuenta (euros). Se conservan valores altos.</td>
+            </tr>
+            <tr>
+              <td>housing</td>
+              <td><span class="type-tag cat">Categórico</span></td>
+              <td>¿Tiene crédito de vivienda? yes / no.</td>
+            </tr>
+            <tr>
+              <td>loan</td>
+              <td><span class="type-tag cat">Categórico</span></td>
+              <td>¿Tiene préstamo personal? yes / no.</td>
+            </tr>
+            <tr>
+              <td>contact</td>
+              <td><span class="type-tag cat">Categórico</span></td>
+              <td>Canal de contacto: cellular, telephone, unknown.</td>
+            </tr>
+            <tr>
+              <td>day</td>
+              <td><span class="type-tag num">Numérico</span></td>
+              <td>Día del mes del último contacto (1–31).</td>
+            </tr>
+            <tr>
+              <td>duration</td>
+              <td><span class="type-tag num">Numérico</span></td>
+              <td>Duración en segundos del último contacto telefónico.</td>
+            </tr>
+            <tr>
+              <td>campaign</td>
+              <td><span class="type-tag num">Numérico</span></td>
+              <td>Número de contactos realizados durante la campaña actual.</td>
+            </tr>
+            <tr>
+              <td>pdays</td>
+              <td><span class="type-tag num">Numérico</span></td>
+              <td>Días transcurridos desde el último contacto de campaña anterior. -1 si no aplica.</td>
+            </tr>
+            <tr>
+              <td>previous</td>
+              <td><span class="type-tag num">Numérico</span></td>
+              <td>Número de contactos previos a esta campaña.</td>
+            </tr>
+            <tr>
+              <td>poutcome</td>
+              <td><span class="type-tag cat">Categórico</span></td>
+              <td>Resultado de la campaña anterior: success, failure, other, unknown.</td>
+            </tr>
+            <tr>
+              <td>y</td>
+              <td><span class="type-tag bin">Binario</span></td>
+              <td>Variable objetivo: ¿el cliente suscribió el depósito? yes / no.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+
+      <!-- ======================================================
+           SECCIÓN 3: CALIDAD DE DATOS
+      ======================================================= -->
+      <section class="doc-section" id="calidad">
+        <p class="doc-section__eyebrow">03</p>
+        <h2 class="doc-section__title">Revisión de Calidad de Datos</h2>
+
+        <h3 class="doc-section__subtitle">Registros duplicados</h3>
+        <p>
+          Se realizó una revisión de duplicados usando la función
+          <code style="font-family:monospace; color:var(--crimson); background:var(--bg-subtle); padding:2px 6px; border-radius:4px;">len(df[df.duplicated()])</code>,
+          que identifica cuántos registros repetidos existen en el dataset.
+        </p>
+        <div class="result-badge">No se encontraron registros duplicados</div>
+
+        <h3 class="doc-section__subtitle">Valores nulos</h3>
+        <p>
+          Se verificó la presencia de valores faltantes utilizando
+          <code style="font-family:monospace; color:var(--crimson); background:var(--bg-subtle); padding:2px 6px; border-radius:4px;">df.isnull().sum()</code>,
+          que muestra el conteo de nulos por variable.
+        </p>
+        <div class="result-badge">No se identificaron valores nulos</div>
+
+        <h3 class="doc-section__subtitle">Tipos de variable</h3>
+        <p>
+          Se revisó el tipo de dato de cada variable con
+          <code style="font-family:monospace; color:var(--crimson); background:var(--bg-subtle); padding:2px 6px; border-radius:4px;">df.dtypes</code>
+          para verificar que cada campo estuviera correctamente clasificado.
+          Se evidenciaron <strong>7 variables numéricas enteras</strong> y <strong>10 variables categóricas</strong>.
+        </p>
+        <div class="result-badge">Todas las variables correctamente clasificadas</div>
+      </section>
+
+
+      <!-- ======================================================
+           SECCIÓN 4: VARIABLES CATEGÓRICAS
+      ======================================================= -->
+      <section class="doc-section" id="categoricas">
+        <p class="doc-section__eyebrow">04</p>
+        <h2 class="doc-section__title">Revisión de Variables Categóricas</h2>
+
+        <p>
+          Se analizaron las 10 variables categóricas mediante gráficos de barras para
+          verificar que contaran con categorías representativas y que no presentaran
+          un único valor dominante. Las frecuencias se calcularon con
+          <code style="font-family:monospace; color:var(--crimson); background:var(--bg-subtle); padding:2px 6px; border-radius:4px;">value_counts()</code>.
+        </p>
+
+        <div class="code-block">
+          <span class="code-block__label">Python</span>
+          <code><span class="kw">for</span> col <span class="kw">in</span> catcols:
+    plt.figure(figsize=(<span class="nm">10</span>, <span class="nm">5</span>))
+    ax = df[col].<span class="fn">value_counts</span>().<span class="fn">plot</span>(kind=<span class="str">'bar'</span>, color=<span class="str">'skyblue'</span>, edgecolor=<span class="str">'black'</span>)
+    ax.<span class="fn">set_title</span>(f<span class="str">'Conteo por categoría: {col}'</span>)
+    ax.<span class="fn">set_xlabel</span>(col)
+    ax.<span class="fn">set_ylabel</span>(<span class="str">'Frecuencia'</span>)
+    plt.<span class="fn">xticks</span>(rotation=<span class="nm">45</span>, ha=<span class="str">'right'</span>)
+    plt.<span class="fn">tight_layout</span>()
+    plt.<span class="fn">show</span>()</code>
+        </div>
+
+        <h3 class="doc-section__subtitle">Criterio de evaluación</h3>
+        <p>
+          Una variable fue candidata a eliminación si una categoría era dominante con
+          más del <strong>95% de participación</strong>, o si no aportaba variabilidad
+          relevante al análisis. Cada variable se evaluó individualmente considerando
+          su contexto.
+        </p>
+
+        <h3 class="doc-section__subtitle">Hallazgos destacados</h3>
+        <ul>
+          <li>
+            <strong>default:</strong> el 98% de los registros corresponden a una misma
+            categoría ("no"). Sin embargo, al hacer referencia a historial de mora,
+            se conservó por su relevancia para caracterizar el perfil del cliente.
+          </li>
+          <li>
+            <strong>poutcome:</strong> cuenta con 4 categorías, donde la mayoría
+            corresponde a "unknown" u "other", lo que limita su valor informativo.
+            Se conservó pero se tuvo en cuenta esta limitación en el análisis.
+          </li>
+        </ul>
+      </section>
+
+
+      <!-- ======================================================
+           SECCIÓN 5: VARIABLES CONTINUAS
+      ======================================================= -->
+      <section class="doc-section" id="continuas">
+        <p class="doc-section__eyebrow">05</p>
+        <h2 class="doc-section__title">Revisión de Variables Continuas</h2>
+
+        <p>
+          Se realizó un análisis de valores atípicos mediante boxplots e histogramas.
+          El criterio combinado buscó identificar límites estadísticos sin eliminar
+          información relevante para el análisis.
+        </p>
+
+        <p>
+          Las variables <strong>age</strong>, <strong>day</strong> y <strong>balance</strong>
+          se excluyeron de la limpieza: la edad tiene un rango válido (18–95), los días
+          se distribuyen correctamente dentro del mes, y balances altos representan
+          clientes de alto valor para el banco.
+        </p>
+
+        <h3 class="doc-section__subtitle">Límites definidos por variable</h3>
+
+        <table class="var-table">
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Límite superior</th>
+              <th>Observaciones eliminadas</th>
+              <th>Criterio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>campaign</td>
+              <td>15 contactos</td>
+              <td>530</td>
+              <td>Boxplot sugiere límite en 6, histograma muestra concentración hasta 15.</td>
+            </tr>
+            <tr>
+              <td>previous</td>
+              <td>25 contactos</td>
+              <td>28</td>
+              <td>El histograma muestra información relevante hasta aprox. 25.</td>
+            </tr>
+            <tr>
+              <td>duration</td>
+              <td>643 segundos</td>
+              <td>3.217</td>
+              <td>Boxplot establece límite estadístico adecuado, frecuencia cae bruscamente.</td>
+            </tr>
+            <tr>
+              <td>pdays</td>
+              <td>400 días</td>
+              <td>153</td>
+              <td>El histograma muestra valores relevantes hasta aprox. 400.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+
+      <!-- ======================================================
+           SECCIÓN 6: LIMPIEZA FINAL
+      ======================================================= -->
+      <section class="doc-section" id="limpieza">
+        <p class="doc-section__eyebrow">06</p>
+        <h2 class="doc-section__title">Eliminación y Limpieza</h2>
+
+        <p>
+          Se eliminaron todas las observaciones que no cumplieran las condiciones
+          definidas para las 4 variables continuas, mediante filtrado condicional del
+          dataset. No se eliminó ninguna columna.
+        </p>
+
+        <div class="stat-row">
+          <div class="stat-box">
+            <div class="stat-box__value">3.928</div>
+            <div class="stat-box__label">Observaciones eliminadas</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box__value">8,6%</div>
+            <div class="stat-box__label">Del dataset original</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box__value">41.283</div>
+            <div class="stat-box__label">Registros finales</div>
+          </div>
+        </div>
+
+        <div class="result-badge">
+          La limpieza no afecta negativamente la base y permite obtener resultados más confiables
+        </div>
+      </section>
+
+
+      <!-- ======================================================
+           SECCIÓN 7: VARIABLES DERIVADAS
+      ======================================================= -->
+      <section class="doc-section" id="derivadas">
+        <p class="doc-section__eyebrow">07</p>
+        <h2 class="doc-section__title">Variables Derivadas para Visualización</h2>
+
+        <p>
+          Se crearon variables derivadas para facilitar el análisis visual, mejorar la
+          interpretación para usuarios no técnicos y optimizar la construcción del
+          dashboard en Looker Studio.
+        </p>
+
+        <!-- Variable 1: Acepta_bin -->
+        <div class="derived-card">
+          <div class="derived-card__name">Acepta_bin</div>
+          <div class="derived-card__desc">
+            Variable binaria creada a partir de <code style="font-family:monospace; color:var(--crimson)">y</code>.
+            Facilita el cálculo de tasas de aceptación. El promedio de esta variable
+            estima directamente la probabilidad de aceptación dentro de cada segmento.
+          </div>
+          <div class="derived-card__values">
+            <span class="value-chip">1 = Cliente aceptó el depósito</span>
+            <span class="value-chip">0 = Cliente no aceptó</span>
+          </div>
+          <div class="code-block">
+            <span class="code-block__label">Looker Studio</span>
+            <code><span class="kw">CASE</span>
+  <span class="kw">WHEN</span> y = <span class="str">"yes"</span> <span class="kw">THEN</span> <span class="nm">1</span>
+  <span class="kw">ELSE</span> <span class="nm">0</span>
+<span class="kw">END</span></code>
+          </div>
+        </div>
+
+        <!-- Variable 2: Grupo_edad -->
+        <div class="derived-card">
+          <div class="derived-card__name">Grupo_edad</div>
+          <div class="derived-card__desc">
+            Variable categórica construida a partir de <code style="font-family:monospace; color:var(--magenta)">age</code>
+            para analizar el comportamiento por ciclo de vida. Permite identificar
+            patrones diferenciales de aceptación según etapa de vida.
+          </div>
+          <div class="derived-card__values">
+            <span class="value-chip">18–29</span>
+            <span class="value-chip">30–39</span>
+            <span class="value-chip">40–49</span>
+            <span class="value-chip">50–59</span>
+            <span class="value-chip">60+</span>
+          </div>
+          <div class="code-block">
+            <span class="code-block__label">Looker Studio</span>
+            <code><span class="kw">CASE</span>
+  <span class="kw">WHEN</span> age &lt; <span class="nm">30</span> <span class="kw">THEN</span> <span class="str">"18-29"</span>
+  <span class="kw">WHEN</span> age &lt; <span class="nm">40</span> <span class="kw">THEN</span> <span class="str">"30-39"</span>
+  <span class="kw">WHEN</span> age &lt; <span class="nm">50</span> <span class="kw">THEN</span> <span class="str">"40-49"</span>
+  <span class="kw">WHEN</span> age &lt; <span class="nm">60</span> <span class="kw">THEN</span> <span class="str">"50-59"</span>
+  <span class="kw">ELSE</span> <span class="str">"60+"</span>
+<span class="kw">END</span></code>
+          </div>
+        </div>
+
+        <!-- Variable 3: Grupo_contactos -->
+        <div class="derived-card">
+          <div class="derived-card__name">Grupo_contactos</div>
+          <div class="derived-card__desc">
+            Variable categórica derivada de <code style="font-family:monospace; color:var(--purple)">campaign</code>.
+            Agrupa el número de contactos durante la campaña actual para evaluar si
+            más intentos se asocian con cambios en la probabilidad de aceptación.
+          </div>
+          <div class="derived-card__values">
+            <span class="value-chip">1 contacto</span>
+            <span class="value-chip">2–3 contactos</span>
+            <span class="value-chip">4–6 contactos</span>
+            <span class="value-chip">7+ contactos</span>
+          </div>
+          <div class="code-block">
+            <span class="code-block__label">Looker Studio</span>
+            <code><span class="kw">CASE</span>
+  <span class="kw">WHEN</span> campaign = <span class="nm">1</span> <span class="kw">THEN</span> <span class="str">"1 contacto"</span>
+  <span class="kw">WHEN</span> campaign <span class="kw">BETWEEN</span> <span class="nm">2</span> <span class="kw">AND</span> <span class="nm">3</span> <span class="kw">THEN</span> <span class="str">"2-3 contactos"</span>
+  <span class="kw">WHEN</span> campaign <span class="kw">BETWEEN</span> <span class="nm">4</span> <span class="kw">AND</span> <span class="nm">6</span> <span class="kw">THEN</span> <span class="str">"4-6 contactos"</span>
+  <span class="kw">ELSE</span> <span class="str">"7+ contactos"</span>
+<span class="kw">END</span></code>
+          </div>
+        </div>
+
+        <!-- Variable 4: Canal_contacto -->
+        <div class="derived-card">
+          <div class="derived-card__name">Canal_contacto</div>
+          <div class="derived-card__desc">
+            Variable categórica derivada de <code style="font-family:monospace; color:var(--coral)">contact</code>.
+            Traduce los canales de contacto al español para facilitar la lectura
+            en el dashboard.
+          </div>
+          <div class="derived-card__values">
+            <span class="value-chip">Celular</span>
+            <span class="value-chip">Teléfono</span>
+            <span class="value-chip">Desconocido</span>
+          </div>
+          <div class="code-block">
+            <span class="code-block__label">Looker Studio</span>
+            <code><span class="kw">CASE</span>
+  <span class="kw">WHEN</span> contact = <span class="str">"cellular"</span>   <span class="kw">THEN</span> <span class="str">"Celular"</span>
+  <span class="kw">WHEN</span> contact = <span class="str">"telephone"</span> <span class="kw">THEN</span> <span class="str">"Teléfono"</span>
+  <span class="kw">ELSE</span> <span class="str">"Desconocido"</span>
+<span class="kw">END</span></code>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p class="footer__team">StoryData Studio</p>
+    <p class="footer__members">
+      Isabella Navarro · Marco Antonio Cruz · Felipe Ardila · Laura Tacha
+    </p>
+  </footer>
+
+</body>
+</html>
