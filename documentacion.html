@@ -7,13 +7,33 @@
   <link rel="stylesheet" href="style.css" />
   <style>
     /* ============================================================
+       VARIABLES — sincronizan con style.css
+    =============================================================== */
+    :root {
+      --bg-base      : #F9F7F2;
+      --bg-card      : #FFFFFF;
+      --bg-subtle    : #EDE8DE;
+      --text-primary : #1C1410;
+      --text-secondary: #5C4F4A;
+      --text-muted   : #B5A898;
+      --crimson      : #C0392B;
+      --magenta      : #A0286E;
+      --purple       : #6B2FA0;
+      --coral        : #E8523F;
+      --steel        : #2D6FA0;
+      --font-display : Arial, sans-serif;
+      --font-body    : Arial, sans-serif;
+      --shadow-sm    : 0 2px 8px rgba(28, 20, 16, 0.08);
+    }
+
+    /* ============================================================
        ESTILOS ESPECÍFICOS DE DOCUMENTACIÓN
        Complementan style.css sin modificarlo
     =============================================================== */
 
     /* Nav de navegación entre páginas */
     .site-nav {
-      background-color: var(--bg-card);
+      background-color: #E0F7FA;
       border-bottom: 1px solid var(--bg-subtle);
       padding: 16px 32px;
       display: flex;
@@ -431,7 +451,6 @@
     <a href="index.html" class="site-nav__brand">StoryData Studio</a>
     <ul class="site-nav__links">
       <li><a href="index.html">Dashboard</a></li>
-      <li><a href="documentacion.html" class="active">Documentación</a></li>
     </ul>
   </nav>
 
